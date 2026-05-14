@@ -22,7 +22,7 @@ export default function OnboardingPage() {
           return;
         }
         setGuestName(data.guest.name);
-        if (data.guest.agreedAt) router.push("/dashboard");
+        if (!data.guest.needsOnboarding) router.push("/dashboard");
       })
       .catch(() => router.push("/"));
   }, [router]);
@@ -35,6 +35,8 @@ export default function OnboardingPage() {
       if (res.ok) {
         setStep(3);
         setTimeout(() => router.push("/dashboard"), 1200);
+      } else {
+        setLoading(false);
       }
     } catch {
       setLoading(false);
