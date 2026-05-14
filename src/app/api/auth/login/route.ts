@@ -29,6 +29,7 @@ export async function POST(req: NextRequest) {
       isAdmin: !!result.guest.is_admin,
       agreedAt: result.guest.agreed_at,
       needsOnboarding: showOnboarding,
+      familyFriendly: !!result.guest.family_friendly,
     },
     accessOpen: open,
     accessStart: start.toISOString(),

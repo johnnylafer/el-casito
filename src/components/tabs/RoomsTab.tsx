@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { Sofa, Bed, CookingPot, ShowerHead, Monitor, ChevronDown, Power, Sun, PartyPopper, Moon, Palette, Waves, TreePalm, Clapperboard, ArrowUp, Printer, Loader2 } from "lucide-react";
 
 interface Props {
-  guest: { id: number; name: string; isAdmin: boolean };
+  guest: { id: number; name: string; isAdmin: boolean; familyFriendly: boolean };
   showToast: (msg: string, type?: "success" | "error") => void;
 }
 
@@ -42,7 +42,7 @@ const SCENE_ICONS: Record<string, typeof Sun> = {
   "Sleep": Moon,
 };
 
-export default function RoomsTab({ showToast }: Props) {
+export default function RoomsTab({ guest, showToast }: Props) {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [expandedRoom, setExpandedRoom] = useState<string | null>(null);
   const [activeScenes, setActiveScenes] = useState<Record<string, string>>({});
@@ -161,7 +161,9 @@ export default function RoomsTab({ showToast }: Props) {
           {rooms.map((room) => {
             const Icon = ROOM_ICONS[room.id] || Sofa;
             const expanded = expandedRoom === room.id;
-            const scenes = augmentScenes(room.scenes);
+            const scenes = augmentScenes(
+              guest.familyFriendly ? room.scenes.filter(s => s !== "Sexy") : room.scenes
+            );
 
             return (
               <div key={room.id} className="card overflow-hidden">
@@ -325,8 +327,8 @@ export default function RoomsTab({ showToast }: Props) {
         </div>
       </section>
 
-      {/* 3D Printer */}
-      <section>
+      {/* 3D Printer (hidden for family-friendly guests) */}
+      {!guest.familyFriendly && <section>
         <p className="section-label">3D Printer (Booty)</p>
         <div className="card p-4 space-y-4">
           {/* Status */}
@@ -392,7 +394,7 @@ export default function RoomsTab({ showToast }: Props) {
             </div>
           </div>
         </div>
-      </section>
+      </section>}
 
       {/* Rick Roll overlay */}
       <AnimatePresence>

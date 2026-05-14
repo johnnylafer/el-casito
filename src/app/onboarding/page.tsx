@@ -10,7 +10,8 @@ export default function OnboardingPage() {
   const [guestName, setGuestName] = useState("");
   const [agreed, setAgreed] = useState([false, false]);
   const [loading, setLoading] = useState(false);
-  const [step, setStep] = useState(0); // 0 = welcome, 1 = how it works, 2 = rules, 3 = done
+  const [step, setStep] = useState(0);
+  const [familyFriendly, setFamilyFriendly] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -22,13 +23,14 @@ export default function OnboardingPage() {
           return;
         }
         setGuestName(data.guest.name);
+        setFamilyFriendly(data.guest.familyFriendly || false);
         if (!data.guest.needsOnboarding) router.push("/dashboard");
       })
       .catch(() => router.push("/"));
   }, [router]);
 
   async function handleAgree() {
-    if (!agreed[0] || !agreed[1]) return;
+    if (!agreed[0] || (!familyFriendly && !agreed[1])) return;
     setLoading(true);
     try {
       const res = await fetch("/api/auth/agree", { method: "POST" });
@@ -154,8 +156,8 @@ export default function OnboardingPage() {
             >
               <div className="text-center mb-2">
                 <p className="section-label">Almost done</p>
-                <h2 className="text-2xl font-bold">Two ground rules</h2>
-                <p className="text-[var(--color-text-tertiary)] text-sm mt-1">Tick both to continue</p>
+                <h2 className="text-2xl font-bold">{familyFriendly ? "One ground rule" : "Two ground rules"}</h2>
+                <p className="text-[var(--color-text-tertiary)] text-sm mt-1">{familyFriendly ? "Tick to continue" : "Tick both to continue"}</p>
               </div>
 
               {/* Rule 1: Volume */}
@@ -189,42 +191,44 @@ export default function OnboardingPage() {
                 </div>
               </label>
 
-              {/* Rule 2: PG */}
-              <label
-                className={`card p-4 flex gap-4 cursor-pointer transition-all duration-150 ${
-                  agreed[1] ? "card-active" : "card-interactive"
-                }`}
-              >
-                <div className={`w-5 h-5 mt-0.5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-all ${
-                  agreed[1]
-                    ? "bg-[var(--color-accent)] border-[var(--color-accent)]"
-                    : "border-[var(--color-text-tertiary)]"
-                }`}>
-                  {agreed[1] && <Check size={14} className="text-white" />}
-                </div>
-                <input
-                  type="checkbox"
-                  checked={agreed[1]}
-                  onChange={(e) => setAgreed([agreed[0], e.target.checked])}
-                  className="sr-only"
-                />
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <Heart size={16} className="text-[var(--color-accent)]" />
-                    <p className="font-semibold text-sm">Keep it PG</p>
+              {/* Rule 2: PG (hidden for family-friendly guests) */}
+              {!familyFriendly && (
+                <label
+                  className={`card p-4 flex gap-4 cursor-pointer transition-all duration-150 ${
+                    agreed[1] ? "card-active" : "card-interactive"
+                  }`}
+                >
+                  <div className={`w-5 h-5 mt-0.5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-all ${
+                    agreed[1]
+                      ? "bg-[var(--color-accent)] border-[var(--color-accent)]"
+                      : "border-[var(--color-text-tertiary)]"
+                  }`}>
+                    {agreed[1] && <Check size={14} className="text-white" />}
                   </div>
-                  <p className="text-[var(--color-text-secondary)] text-sm leading-relaxed">
-                    No horny stuff in the apartment, unless Fen & Kura are there ;P
-                    <span className="text-[var(--color-text-tertiary)] text-xs block mt-1 italic">
-                      You know who you are.
-                    </span>
-                  </p>
-                </div>
-              </label>
+                  <input
+                    type="checkbox"
+                    checked={agreed[1]}
+                    onChange={(e) => setAgreed([agreed[0], e.target.checked])}
+                    className="sr-only"
+                  />
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <Heart size={16} className="text-[var(--color-accent)]" />
+                      <p className="font-semibold text-sm">Keep it PG</p>
+                    </div>
+                    <p className="text-[var(--color-text-secondary)] text-sm leading-relaxed">
+                      No horny stuff in the apartment, unless Fen & Kura are there ;P
+                      <span className="text-[var(--color-text-tertiary)] text-xs block mt-1 italic">
+                        You know who you are.
+                      </span>
+                    </p>
+                  </div>
+                </label>
+              )}
 
               <button
                 onClick={handleAgree}
-                disabled={!agreed[0] || !agreed[1] || loading}
+                disabled={!agreed[0] || (!familyFriendly && !agreed[1]) || loading}
                 className="btn-primary w-full"
               >
                 {loading ? "Setting up..." : "I promise to behave (mostly)"}

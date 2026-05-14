@@ -12,6 +12,7 @@ interface Guest {
   agreed_at: string | null;
   session_token: string | null;
   is_admin: number;
+  family_friendly: number;
   created_at: string;
   last_seen_at: string | null;
 }

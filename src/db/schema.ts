@@ -29,6 +29,7 @@ function initSchema(db: Database.Database) {
       agreed_at TEXT,
       session_token TEXT UNIQUE,
       is_admin INTEGER DEFAULT 0,
+      family_friendly INTEGER DEFAULT 0,
       created_at TEXT DEFAULT (datetime('now')),
       last_seen_at TEXT
     );
@@ -93,23 +94,25 @@ export function seedGuests() {
   if (existing.c > 0) return;
 
   const guests = [
-    { name: "Rick", admin: 0 },
-    { name: "Sjef", admin: 0 },
-    { name: "Carlos", admin: 0 },
-    { name: "Perry", admin: 0 },
-    { name: "Anthony", admin: 0 },
-    { name: "Thomas", admin: 0 },
-    { name: "Lazzy", admin: 0 },
-    { name: "Requinard", admin: 0 },
-    { name: "Kass", admin: 0 },
-    { name: "Luppo", admin: 0 },
-    { name: "Pazuzu", admin: 0 },
-    { name: "Fen", admin: 1 },
-    { name: "Kura", admin: 1 },
+    { name: "Rick", admin: 0, ff: 0 },
+    { name: "Sjef", admin: 0, ff: 0 },
+    { name: "Carlos", admin: 0, ff: 0 },
+    { name: "Perry", admin: 0, ff: 0 },
+    { name: "Anthony", admin: 0, ff: 0 },
+    { name: "Thomas", admin: 0, ff: 0 },
+    { name: "Lazzy", admin: 0, ff: 0 },
+    { name: "Requinard", admin: 0, ff: 0 },
+    { name: "Kass", admin: 0, ff: 0 },
+    { name: "Luppo", admin: 0, ff: 0 },
+    { name: "Pazuzu", admin: 0, ff: 0 },
+    { name: "Fen", admin: 1, ff: 0 },
+    { name: "Kura", admin: 1, ff: 0 },
+    { name: "Xavier", admin: 0, ff: 1 },
+    { name: "Marta", admin: 0, ff: 1 },
   ];
 
   const insert = db.prepare(
-    "INSERT INTO guests (name, invite_code, is_admin) VALUES (?, ?, ?)"
+    "INSERT INTO guests (name, invite_code, is_admin, family_friendly) VALUES (?, ?, ?, ?)"
   );
   const insertPresence = db.prepare(
     "INSERT INTO presence (guest_id, guest_name, status) VALUES (?, ?, 'away')"
@@ -118,7 +121,7 @@ export function seedGuests() {
   const txn = db.transaction(() => {
     for (const g of guests) {
       const code = generateInviteCode(g.name);
-      const result = insert.run(g.name, code, g.admin);
+      const result = insert.run(g.name, code, g.admin, g.ff);
       insertPresence.run(result.lastInsertRowid, g.name);
     }
   });

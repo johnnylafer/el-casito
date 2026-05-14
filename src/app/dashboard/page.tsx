@@ -17,6 +17,7 @@ interface Guest {
   id: number;
   name: string;
   isAdmin: boolean;
+  familyFriendly: boolean;
 }
 
 const TABS: { id: Tab; label: string; icon: typeof Home }[] = [

@@ -20,6 +20,7 @@ export async function GET() {
       isAdmin: !!guest.is_admin,
       agreedAt: guest.agreed_at,
       needsOnboarding: needsOnboarding(guest),
+      familyFriendly: !!guest.family_friendly,
     },
     accessOpen: open,
     accessStart: start.toISOString(),
