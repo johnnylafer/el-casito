@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { DoorOpen, Key, LogOut, MapPin, Users, X, Check } from "lucide-react";
+import { DoorOpen, Key, LogOut, MapPin, Users, X, Check, Wifi, Copy } from "lucide-react";
 
 interface Props {
   guest: { id: number; name: string; isAdmin: boolean };
@@ -295,6 +295,26 @@ export default function HomeTab({ guest, showToast }: Props) {
               </div>
             </div>
           )}
+        </div>
+      </section>
+
+      {/* WiFi */}
+      <section>
+        <p className="section-label">WiFi</p>
+        <div className="card p-4 flex items-center gap-4">
+          <div className="w-10 h-10 rounded-xl bg-[var(--color-surface-2)] flex items-center justify-center flex-shrink-0">
+            <Wifi size={18} className="text-[var(--color-text-secondary)]" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium font-mono">ftre.co</p>
+            <p className="text-xs text-[var(--color-text-tertiary)] font-mono">#Simsimma23</p>
+          </div>
+          <button
+            onClick={() => { navigator.clipboard.writeText("#Simsimma23"); showToast("Password copied"); }}
+            className="p-2 hover:bg-[var(--color-surface-2)] rounded-lg transition-colors"
+          >
+            <Copy size={16} className="text-[var(--color-text-tertiary)]" />
+          </button>
         </div>
       </section>
 

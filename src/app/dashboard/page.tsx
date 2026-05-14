@@ -3,15 +3,16 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useRouter } from "next/navigation";
-import { Home, Lightbulb, Tv, MessageCircle, LogOut } from "lucide-react";
+import { Home, Lightbulb, Tv, MessageCircle, LogOut, Shield } from "lucide-react";
 import SnakeGame from "@/components/SnakeGame";
 import Logo from "@/components/Logo";
 import HomeTab from "@/components/tabs/HomeTab";
 import RoomsTab from "@/components/tabs/RoomsTab";
 import MediaTab from "@/components/tabs/MediaTab";
 import FeedTab from "@/components/tabs/FeedTab";
+import AdminTab from "@/components/tabs/AdminTab";
 
-type Tab = "home" | "rooms" | "media" | "feed";
+type Tab = "home" | "rooms" | "media" | "feed" | "admin";
 
 interface Guest {
   id: number;
@@ -20,11 +21,12 @@ interface Guest {
   familyFriendly: boolean;
 }
 
-const TABS: { id: Tab; label: string; icon: typeof Home }[] = [
+const TABS: { id: Tab; label: string; icon: typeof Home; adminOnly?: boolean }[] = [
   { id: "home", label: "Home", icon: Home },
   { id: "rooms", label: "Rooms", icon: Lightbulb },
   { id: "media", label: "Media", icon: Tv },
   { id: "feed", label: "Feed", icon: MessageCircle },
+  { id: "admin", label: "Admin", icon: Shield, adminOnly: true },
 ];
 
 export default function DashboardPage() {
@@ -141,6 +143,7 @@ export default function DashboardPage() {
             {activeTab === "rooms" && guest && <RoomsTab guest={guest} showToast={showToast} />}
             {activeTab === "media" && guest && <MediaTab guest={guest} showToast={showToast} />}
             {activeTab === "feed" && guest && <FeedTab guest={guest} showToast={showToast} />}
+            {activeTab === "admin" && guest?.isAdmin && <AdminTab guest={guest} showToast={showToast} />}
           </motion.div>
         </AnimatePresence>
       </main>
@@ -148,7 +151,7 @@ export default function DashboardPage() {
       {/* Bottom Nav */}
       <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-[var(--color-border)]" style={{ background: "var(--color-surface-0)" }}>
         <div className="max-w-lg mx-auto flex items-center pb-safe">
-          {TABS.map((tab) => {
+          {TABS.filter(t => !t.adminOnly || guest?.isAdmin).map((tab) => {
             const active = activeTab === tab.id;
             return (
               <button
