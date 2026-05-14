@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { loginWithCode, isAccessWindowOpen, getAccessWindowInfo } from "@/lib/auth";
+import { loginWithCode, isAccessWindowOpen, getAccessWindowInfo, needsOnboarding } from "@/lib/auth";
 import { logActivity } from "@/lib/log";
 import { seedGuests } from "@/db/schema";
 
@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
   }
 
   const { open, start } = getAccessWindowInfo();
-  const needsOnboarding = !result.guest.agreed_at;
+  const showOnboarding = needsOnboarding(result.guest);
 
   logActivity(result.guest.id, result.guest.name, "logged_in", null, "auth");
 
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
       name: result.guest.name,
       isAdmin: !!result.guest.is_admin,
       agreedAt: result.guest.agreed_at,
-      needsOnboarding,
+      needsOnboarding: showOnboarding,
     },
     accessOpen: open,
     accessStart: start.toISOString(),

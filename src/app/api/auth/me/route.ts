@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getSession, getAccessWindowInfo } from "@/lib/auth";
+import { getSession, getAccessWindowInfo, needsOnboarding } from "@/lib/auth";
 import { seedGuests } from "@/db/schema";
 
 export async function GET() {
@@ -19,7 +19,7 @@ export async function GET() {
       name: guest.name,
       isAdmin: !!guest.is_admin,
       agreedAt: guest.agreed_at,
-      needsOnboarding: !guest.agreed_at,
+      needsOnboarding: needsOnboarding(guest),
     },
     accessOpen: open,
     accessStart: start.toISOString(),

@@ -42,10 +42,18 @@ export async function getSession(): Promise<Guest | null> {
   return guest;
 }
 
+export function needsOnboarding(guest: Guest): boolean {
+  if (!guest.agreed_at) return true;
+  // If they agreed before the access window opened, make them re-agree
+  const accessStart = new Date(process.env.ACCESS_START || "2026-05-16T08:30:00Z");
+  const agreedAt = new Date(guest.agreed_at + "Z");
+  return agreedAt < accessStart;
+}
+
 export async function requireAuth(): Promise<Guest> {
   const guest = await getSession();
   if (!guest) throw new Error("Unauthorized");
-  if (!guest.agreed_at) throw new Error("Onboarding required");
+  if (needsOnboarding(guest)) throw new Error("Onboarding required");
   return guest;
 }
 
