@@ -128,6 +128,7 @@ export default function HomeTab({ guest, showToast }: Props) {
 
   const atApartment = presence.filter((p) => p.status === "here");
   const atTerrain = presence.filter((p) => p.status === "terrain");
+  const awayGuests = presence.filter((p) => p.status === "away");
 
   return (
     <div className="space-y-6">
@@ -278,10 +279,20 @@ export default function HomeTab({ guest, showToast }: Props) {
             </div>
           )}
 
-          {atApartment.length === 0 && atTerrain.length === 0 && (
-            <div className="card p-6 text-center">
-              <Users size={24} className="text-[var(--color-text-tertiary)] mx-auto mb-2" />
-              <p className="text-sm text-[var(--color-text-tertiary)]">Nobody checked in yet</p>
+          {awayGuests.length > 0 && (
+            <div className="card p-4">
+              <div className="flex items-center gap-2 mb-2.5">
+                <LogOut size={14} className="text-[var(--color-text-tertiary)]" />
+                <span className="text-xs font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider">Not checked in</span>
+                <span className="text-xs text-[var(--color-text-tertiary)]">{awayGuests.length}</span>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {awayGuests.map((p) => (
+                  <span key={p.guest_id} className="chip bg-[var(--color-surface-2)] text-[var(--color-text-tertiary)]">
+                    {p.guest_name}
+                  </span>
+                ))}
+              </div>
             </div>
           )}
         </div>
