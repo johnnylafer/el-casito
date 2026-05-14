@@ -44,8 +44,12 @@ export async function getSession(): Promise<Guest | null> {
 
 export function needsOnboarding(guest: Guest): boolean {
   if (!guest.agreed_at) return true;
-  // If they agreed before the access window opened, make them re-agree
+  // Only enforce re-onboarding once the access window is actually open
+  // Before the window: if they agreed at all, let them through (testing phase)
+  // After window opens: if they agreed before the window, make them re-agree
+  const now = new Date();
   const accessStart = new Date(process.env.ACCESS_START || "2026-05-16T08:30:00Z");
+  if (now < accessStart) return false; // Before the event, any agreement is fine
   const agreedAt = new Date(guest.agreed_at + "Z");
   return agreedAt < accessStart;
 }
