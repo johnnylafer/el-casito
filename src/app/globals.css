@@ -1,26 +1,184 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Warm dark palette — intentionally NOT the default purple AI look */
+  --color-bg: #121214;
+  --color-surface-0: #1a1a1e;
+  --color-surface-1: #222226;
+  --color-surface-2: #2a2a2f;
+  --color-surface-3: #333338;
+
+  --color-text: #e8e4df;
+  --color-text-secondary: #9a9590;
+  --color-text-tertiary: #5a5855;
+
+  --color-border: #2a2a2f;
+  --color-border-hover: #3a3a40;
+
+  /* Accent: warm coral — distinctive, not the AI-default purple */
+  --color-accent: #e8655a;
+  --color-accent-hover: #d4554a;
+  --color-accent-soft: rgba(232, 101, 90, 0.12);
+  --color-accent-muted: rgba(232, 101, 90, 0.06);
+
+  --color-success: #4ade80;
+  --color-success-soft: rgba(74, 222, 128, 0.12);
+  --color-warning: #fbbf24;
+  --color-danger: #f87171;
+
+  --font-sans: var(--font-inter);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text);
+  overflow-x: hidden;
+}
+
+/* Subtle background texture: noise + very faint warm gradient at top */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse 100% 60% at 50% -5%, rgba(232, 101, 90, 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 50% at 85% 100%, rgba(120, 90, 180, 0.12) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* Subtle grain overlay */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.35;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
+/* Elevation surfaces — lighter = closer, no shadows in dark mode */
+.surface-0 { background: var(--color-surface-0); }
+.surface-1 { background: var(--color-surface-1); }
+.surface-2 { background: var(--color-surface-2); }
+
+/* Card component */
+.card {
+  background: var(--color-surface-1);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+}
+
+.card-interactive {
+  background: var(--color-surface-1);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.card-interactive:hover {
+  border-color: var(--color-border-hover);
+  background: var(--color-surface-2);
+}
+.card-interactive:active {
+  background: var(--color-surface-2);
+}
+
+/* Active/selected card state */
+.card-active {
+  background: var(--color-accent-muted);
+  border-color: var(--color-accent);
+}
+
+/* Input styling */
+.input {
+  background: var(--color-surface-0);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: var(--color-text);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s ease;
+  width: 100%;
+}
+.input::placeholder {
+  color: var(--color-text-tertiary);
+}
+.input:focus {
+  border-color: var(--color-accent);
+}
+
+/* Primary button */
+.btn-primary {
+  background: var(--color-accent);
+  color: white;
+  font-weight: 500;
+  font-size: 14px;
+  padding: 12px 24px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+.btn-primary:hover { background: var(--color-accent-hover); }
+.btn-primary:active { transform: scale(0.98); }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Ghost button */
+.btn-ghost {
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  font-size: 14px;
+  padding: 12px 24px;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.btn-ghost:hover {
+  background: var(--color-surface-1);
+  color: var(--color-text);
+}
+
+/* Section label */
+.section-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+  margin-bottom: 10px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--color-surface-3);
+  border-radius: 3px;
+}
+
+/* Safe area */
+.pb-safe {
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 12px);
+}
+
+/* Chip/tag */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
 }
