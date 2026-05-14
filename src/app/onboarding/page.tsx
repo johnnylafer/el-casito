@@ -214,9 +214,9 @@ export default function OnboardingPage() {
                     <p className="font-semibold text-sm">Keep it PG</p>
                   </div>
                   <p className="text-[var(--color-text-secondary)] text-sm leading-relaxed">
-                    No horny stuff in the apartment.
+                    No horny stuff in the apartment, unless Fen & Kura are there ;P
                     <span className="text-[var(--color-text-tertiary)] text-xs block mt-1 italic">
-                      Unless Fen & Kura are there ;P
+                      You know who you are.
                     </span>
                   </p>
                 </div>
